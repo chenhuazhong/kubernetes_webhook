@@ -1,5 +1,5 @@
 #!/bin/bash
-
+bash uninstall.sh
 namespace=kube-system
 
 bash deployments/create_cert.sh --namespace ${namespace}
