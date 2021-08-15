@@ -2,8 +2,10 @@ package main
 
 import "kubernetes_webhook/apps"
 
-func main() {
-
+func run()  {
    apps.Server()
+}
 
+func main() {
+   run()
 }

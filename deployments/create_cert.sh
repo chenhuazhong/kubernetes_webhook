@@ -2,11 +2,58 @@
 
 set -e
 
+usage() {
+    cat <<EOF
+Generate certificate suitable for use with an sidecar-injector webhook service.
+
+This script uses k8s' CertificateSigningRequest API to a generate a
+certificate signed by k8s CA suitable for use with sidecar-injector webhook
+services. This requires permissions to create and approve CSR. See
+https://kubernetes.io/docs/tasks/tls/managing-tls-in-a-cluster for
+detailed explantion and additional instructions.
+
+The server key/cert k8s CA cert are stored in a k8s secret.
+
+usage: ${0} [OPTIONS]
+
+The following flags are required.
+
+       --service          Service name of webhook.
+       --namespace        Namespace where webhook service and secret reside.
+       --secret           Secret name for CA certificate and server certificate/key pair.
+EOF
+    exit 1
+}
+
+while [[ $# -gt 0 ]]; do
+    case ${1} in
+        --service)
+            service="$2"
+            shift
+            ;;
+        --secret)
+            secret="$2"
+            shift
+            ;;
+        --namespace)
+            namespace="$2"
+            shift
+            ;;
+        --ip)
+            ip="$2"
+            shift
+            ;;
+        *)
+            usage
+            ;;
+    esac
+    shift
+done
 
 [ -z ${service} ] && service=admission-webhook-example-svc
 [ -z ${secret} ] && secret=admission-webhook-example-certs
 [ -z ${namespace} ] && namespace=default
-ip=192.168.179.128
+[ -z ${ip} ] && ip=localhost
 
 if [ ! -x "$(command -v openssl)" ]; then
     echo "openssl not found"
@@ -14,7 +61,14 @@ if [ ! -x "$(command -v openssl)" ]; then
 fi
 
 csrName=${service}.${namespace}
-tmpdir='/home/huazhong/k8s/key'
+tmpdir='./certs'
+
+if [ -e $tmpdir ];then
+  echo "删除证书临时目录文件 ${tmpdir}"
+  rm  $tmpdir/*
+else
+  mkdir tmpdir
+fi
 echo "creating certs in tmpdir ${tmpdir} "
 
 cat <<EOF >> ${tmpdir}/csr.conf
@@ -31,8 +85,12 @@ subjectAltName = @alt_names
 DNS.1 = ${service}
 DNS.2 = ${service}.${namespace}
 DNS.3 = ${service}.${namespace}.svc
-IP.1 = $ip
 EOF
+
+if [ $ip != "localhost" ]
+then
+  echo "IP.1 = $ip" >> ${tmpdir}/csr.conf
+fi
 
 openssl genrsa -out ${tmpdir}/server-key.pem 2048
 openssl req -new -key ${tmpdir}/server-key.pem -subj "/CN=${service}.${namespace}.svc" -out ${tmpdir}/server.csr -config ${tmpdir}/csr.conf

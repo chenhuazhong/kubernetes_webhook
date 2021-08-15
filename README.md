@@ -22,3 +22,4 @@ https://github.com/kubernetes/kubernetes/blob/release-1.21/test/images/agnhost/w
 https://www.qikqiak.com/post/k8s-admission-webhook/
 https://github.com/morvencao/kube-mutating-webhook-tutorial
 https://github.com/cnych/admission-webhook-example
+https://www.jianshu.com/p/1de38a3f50f3

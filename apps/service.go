@@ -9,7 +9,7 @@ import (
 
 
 func Server() {
-	pair, err := tls.LoadX509KeyPair("/home/huazhong/k8s/key/server-cert.pem", "/home/huazhong/k8s/key/server-key.pem")
+	pair, err := tls.LoadX509KeyPair(settings.CERT_FILE_PATH, settings.KEY_FILE_PATH)
 	if err != nil {
 		panic(err)
 	}
