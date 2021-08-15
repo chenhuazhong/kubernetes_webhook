@@ -3,6 +3,9 @@
 ### 要求
 * go 1.15
 * kubernetes 1.20.*
+* 开发环境和k8s集群 网络互通（开发调试时apiserver webhook模块调本地服务）
+* 开发环境有kubectl 和kubeconfig （本地开发环境通过kuberconfig链接集群）
+
 
 ### 简介
 k8s提供两个动态准入控制器入口，分别是 mutating webhook 和validating webhook。  
