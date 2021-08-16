@@ -3,6 +3,7 @@ package apps
 import (
 	"crypto/tls"
 	"fmt"
+	"kubernetes_webhook/apps/deploymnet"
 	"kubernetes_webhook/settings"
 	"net/http"
 )
@@ -18,11 +19,10 @@ func Server() {
 		TLSConfig: &tls.Config{Certificates: []tls.Certificate{pair}},
 	}
 	mux := http.NewServeMux()
-	mux.HandleFunc("/huazhongwebhook", func(writer http.ResponseWriter, request *http.Request) {
-		fmt.Println("hahahahahh")
-	})
+	mux.HandleFunc("/huazhongwebhook", deploymnet.ImagePull)
 	//mux.HandleFunc("/validate", whsvr.serve)
 	server.Handler = mux
+	fmt.Println("start service------")
 	starterr := server.ListenAndServeTLS("", "")
 
 	if starterr != nil {
