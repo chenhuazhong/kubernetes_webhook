@@ -37,3 +37,8 @@ func Typefun(string_value string ,value interface{}) interface{} {
 		return string_value
 	}
 }
+
+type APIResource interface {
+	String()
+	Update(func(instance *APIResource, validata ...interface{}))
+}
