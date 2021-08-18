@@ -42,3 +42,10 @@ type APIResource interface {
 	String()
 	Update(func(instance *APIResource, validata ...interface{}))
 }
+
+
+type ApiResourceJsonPath struct {
+	Op string `json:"op"`
+	Value interface{} `json:"value"`
+	Path string `json:"path"`
+}

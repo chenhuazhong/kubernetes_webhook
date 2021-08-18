@@ -14,14 +14,19 @@ type  AdmissionReviewHeadler struct {
 	codecs serializer.CodecFactory
 	runtimeScheme *runtime.Scheme
 	Deserializer runtime.Decoder
-	request *http.Request
+	Request *http.Request
 	Resource utils.APIResource
 	Adm_obj v1.AdmissionReview
 
 }
 
+//func (adm *AdmissionReviewHeadler) Data() v1.AdmissionReview{
+//	return v1.AdmissionReview{
+//		Request: adm.Request
+//	}
+//}
 func (adm *AdmissionReviewHeadler) LoadAdmissionReview() {
-	adm_json_data, err := ioutil.ReadAll(adm.request.Body)
+	adm_json_data, err := ioutil.ReadAll(adm.Request.Body)
 	if err != nil{
 		fmt.Println(err)
 		panic(err)
