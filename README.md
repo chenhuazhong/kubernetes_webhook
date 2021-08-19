@@ -44,3 +44,7 @@ https://www.qikqiak.com/post/k8s-admission-webhook/
 https://github.com/morvencao/kube-mutating-webhook-tutorial
 https://github.com/cnych/admission-webhook-example
 https://www.jianshu.com/p/1de38a3f50f3
+https://jsonpatch.com/
+
+### 安装k8s集群
+https://github.com/chenhuazhong/localkube

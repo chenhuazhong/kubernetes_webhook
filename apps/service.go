@@ -6,6 +6,7 @@ import (
 	"fmt"
 	v12 "k8s.io/api/admission/v1"
 	v1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/serializer"
@@ -36,6 +37,7 @@ func Server() {
 	}
 	mux := http.NewServeMux()
 	mux.HandleFunc("/huazhongwebhook", ImagePull)
+	mux.HandleFunc("/pod-mutating-sudecar", Sidecar)
 	//mux.HandleFunc("/validate", whsvr.serve)
 	server.Handler = mux
 	fmt.Println("start service------")
@@ -61,23 +63,38 @@ func Serializer() runtime.Decoder{
 	return serializer.NewCodecFactory(runtime.NewScheme()).UniversalDeserializer()
 }
 
+
+func Ident(writer http.ResponseWriter, request *http.Request, ) {
+	err := recover()
+	if  err != nil{
+		return_redmission := v12.AdmissionReview{}
+		return_redmission.Response = &v12.AdmissionResponse{
+			Allowed: false,
+			Result:  &metav1.Status{
+				Code: 400,
+				Message: fmt.Sprintf("%v", err),
+			},
+
+		}
+		data_byte,_ := json.Marshal(return_redmission)
+		writer.Write(data_byte)
+	}
+}
+
+
+type SidecarContainer struct {
+	Name string `json:"name"`
+	Image string `json:"image"`
+	ImagePullPolicy string `json:"image_pull_policy"`
+	//Resources interface{}
+
+
+}
+
+
 func ImagePull(writer http.ResponseWriter, request *http.Request) {
 
-	defer func() {
-		err := recover()
-		if  err != nil{
-			return_redmission := v12.AdmissionReview{}
-			return_redmission.Response = &v12.AdmissionResponse{
-				Allowed: false,
-				Result:  &metav1.Status{
-                  Code: 400,
-                  Message: fmt.Sprintf("%v", err),
-				},
-			}
-			data_byte,_ := json.Marshal(return_redmission)
-			writer.Write(data_byte)
-		}
-	}()
+	defer Ident(writer, request)
 
 	adm_serializer := AdmissionReviewHeadler{
 		Request: request,
@@ -116,6 +133,57 @@ func ImagePull(writer http.ResponseWriter, request *http.Request) {
 	}
 	writer.Write(data)
 
+}
 
+func Sidecar(writer http.ResponseWriter, request *http.Request)  {
+
+	defer Ident(writer, request)
+    fmt.Println("sidecar--------")
+	adm_serializer := AdmissionReviewHeadler{
+		Request: request,
+		//runtimeScheme: runtime.NewScheme(),
+		//codecs: serializer.NewCodecFactory(runtime.NewScheme()),
+		Deserializer: Serializer(),
+	}
+	adm_serializer.LoadAdmissionReview()
+	pod := corev1.Pod{}
+	adm_serializer.Load(&pod)
+
+	var path_list []utils.ApiResourceJsonPath
+    //command_list := make([]string, 10)
+    command_list := []string{"sleep", "33333"}
+	sidecar_contarner_config := corev1.Container{
+		Name: "busybox",
+		Image: "busybox",
+		ImagePullPolicy: "Always",
+		Command: command_list,
+
+	}
+	contarner_list := []corev1.Container{}
+	contarner_list = append(contarner_list, sidecar_contarner_config)
+	contarner_list = append(contarner_list, pod.Spec.Containers...)
+
+
+
+	//contarner_list_byte, _ := json.Marshal(contarner_list)
+	path_list = append(path_list, utils.ApiResourceJsonPath{
+		Op: "replace",
+		Path: "/spec/containers",
+		Value: contarner_list,
+	})
+	var PatchTypeJSONPatch v12.PatchType = "JsonPath"
+	path_byte_data,_ :=json.Marshal(path_list)
+	return_redmission := v12.AdmissionReview{}
+	return_redmission.Response = &v12.AdmissionResponse{
+		Patch: path_byte_data,
+		PatchType: &PatchTypeJSONPatch,
+		UID: adm_serializer.Adm_obj.Request.UID,
+		Allowed: true,
+	}
+	data, err := json.Marshal(return_redmission)
+	if err != nil{
+		panic(err)
+	}
+	writer.Write(data)
 
 }

@@ -13,4 +13,13 @@ webhooks:
       - operations: [ "CREATE" ]
         apiGroups: ["apps", ""]
         apiVersions: ["v1"]
-        resources: ["deployments","services"]
+        resources: ["deployments"]
+  - name: mutating-sidecar-pod.huazhong.com
+    clientConfig:
+      url: https://192.168.179.128:8088/pod-mutating-sudecar
+      caBundle: ${CA_BUNDLE}
+    rules:
+      - operations: [ "CREATE" ]
+        apiGroups: ["core", ""]
+        apiVersions: ["v1"]
+        resources: ["pods"]
