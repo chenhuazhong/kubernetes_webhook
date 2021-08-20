@@ -19,10 +19,12 @@
 ![image.png](https://i.loli.net/2021/08/21/l4q5hnMTaU2XyFg.png)
 
 ### 注入配置 MutatingWebhookConfiguration
-    mutating webhook是在k8s创建资源的过程中动态的修改支援的配置信息的钩子功能(如把镜像拉取规则改为IfNotPresent， 植入sidecar容器配置)
+    mutating webhook是在k8s创建资源的过程中动态的修改支援的配置信息的钩子功能
+    (如把镜像拉取规则改为IfNotPresent， 植入sidecar容器配置)
 ### 校验配置 ValidatingWebhookConfiguration
-    validating webhook 在支援创建的过程中作用是检查资源的配置是否符合我们的业务规则，如我们不允许 pod中没有做资源限制的配置，
-    所有容器都要求有cpu和内存的使用限制。没有配置资源限制的pod不能通过检验，这个功能可以用validating webhook 实现。
+    validating webhook 在支援创建的过程中作用是检查资源的配置是否符合我们的业务规则，
+    如我们不允许 pod中没有做资源限制的配置，所有容器都要求有cpu和内存的使用限制。
+    没有配置资源限制的pod不能通过检验，这个功能可以用validating webhook 实现。
 
 
 ### 开发环境调试
@@ -50,13 +52,13 @@
 
 
 ### 参考
-https://github.com/kubernetes/kubernetes/blob/release-1.21/test/images/agnhost/webhook/main.go
-https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#webhook-configuration
-https://www.qikqiak.com/post/k8s-admission-webhook/
-https://github.com/morvencao/kube-mutating-webhook-tutorial
-https://github.com/cnych/admission-webhook-example
-https://www.jianshu.com/p/1de38a3f50f3
-https://jsonpatch.com/
+https://github.com/kubernetes/kubernetes/blob/release-1.21/test/images/agnhost/webhook/main.go  
+https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#webhook-configuration   
+https://www.qikqiak.com/post/k8s-admission-webhook/  
+https://github.com/morvencao/kube-mutating-webhook-tutorial  
+https://github.com/cnych/admission-webhook-example  
+https://www.jianshu.com/p/1de38a3f50f3  
+https://jsonpatch.com/  
 
 ### 安装k8s集群
 https://github.com/chenhuazhong/localkube
