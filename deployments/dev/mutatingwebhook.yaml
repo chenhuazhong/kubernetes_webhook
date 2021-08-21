@@ -7,7 +7,7 @@ metadata:
 webhooks:
   - name: mutating-example.qikqiak.com
     clientConfig:
-      url: https://192.168.179.128:8088/huazhongwebhook
+      url: https://${addr}//huazhongwebhook
       caBundle: ${CA_BUNDLE}
     rules:
       - operations: [ "CREATE" ]
@@ -16,7 +16,7 @@ webhooks:
         resources: ["deployments"]
   - name: mutating-sidecar-pod.huazhong.com
     clientConfig:
-      url: https://192.168.179.128:8088/pod-mutating-sudecar
+      url: https://${addr}//pod-mutating-sudecar
       caBundle: ${CA_BUNDLE}
     rules:
       - operations: [ "CREATE" ]

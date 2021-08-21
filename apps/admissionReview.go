@@ -19,6 +19,17 @@ type  AdmissionReviewHeadler struct {
 	Adm_obj v1.AdmissionReview
 
 }
+func Serializer() runtime.Decoder{
+	return serializer.NewCodecFactory(runtime.NewScheme()).UniversalDeserializer()
+}
+
+func NewAdmiSsionReviewHeadler(request *http.Request) AdmissionReviewHeadler{
+	return AdmissionReviewHeadler{
+		Request: request,
+		Deserializer: Serializer(),
+	}
+
+}
 
 //func (adm *AdmissionReviewHeadler) Data() v1.AdmissionReview{
 //	return v1.AdmissionReview{

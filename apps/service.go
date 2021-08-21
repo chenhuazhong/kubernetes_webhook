@@ -8,10 +8,9 @@ import (
 	v1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/apimachinery/pkg/runtime/serializer"
 	"kubernetes_webhook/settings"
 	"kubernetes_webhook/utils"
+	"log"
 	"net/http"
 )
 
@@ -35,17 +34,19 @@ func Server() {
 		Addr:      fmt.Sprintf(":%v", settings.HOST_PORT),
 		TLSConfig: &tls.Config{Certificates: []tls.Certificate{pair}},
 	}
-	mux := http.NewServeMux()
+	mux := &APIServeMux{}
 	mux.HandleFunc("/huazhongwebhook", ImagePull)
 	mux.HandleFunc("/pod-mutating-sudecar", Sidecar)
+	mux.HandleFunc("/validate", ResouceValidate)
 	//mux.HandleFunc("/validate", whsvr.serve)
 	server.Handler = mux
 	fmt.Println("start service------")
-	starterr := server.ListenAndServeTLS("", "")
+	//starterr := server.ListenAndServeTLS("", "")
+	log.Fatal(server.ListenAndServeTLS("", ""))
 
-	if starterr != nil {
-		panic(starterr)
-	}
+	//if starterr != nil {
+	//	panic(starterr)
+	//}
 }
 
 
@@ -59,9 +60,7 @@ func Server() {
 //	defaulter = runtime.ObjectDefaulter(runtimeScheme)
 //)
 
-func Serializer() runtime.Decoder{
-	return serializer.NewCodecFactory(runtime.NewScheme()).UniversalDeserializer()
-}
+
 
 
 func Ident(writer http.ResponseWriter, request *http.Request, ) {
@@ -96,12 +95,7 @@ func ImagePull(writer http.ResponseWriter, request *http.Request) {
 
 	defer Ident(writer, request)
 
-	adm_serializer := AdmissionReviewHeadler{
-		Request: request,
-		//runtimeScheme: runtime.NewScheme(),
-		//codecs: serializer.NewCodecFactory(runtime.NewScheme()),
-		Deserializer: Serializer(),
-	}
+	adm_serializer := NewAdmiSsionReviewHeadler(request)
 	adm_serializer.LoadAdmissionReview()
 	deployment := v1.Deployment{}
 	adm_serializer.Load(&deployment)
