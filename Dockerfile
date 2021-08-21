@@ -1,4 +1,4 @@
-FROM debian
+FROM centos
 
 COPY ./dist/kubernetes_webhook /app/kubernetes_webhook
 COPY ./certs /app/certs

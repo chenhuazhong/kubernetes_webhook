@@ -38,6 +38,9 @@ func Server() {
 	mux.HandleFunc("/huazhongwebhook", ImagePull)
 	mux.HandleFunc("/pod-mutating-sudecar", Sidecar)
 	mux.HandleFunc("/validate", ResouceValidate)
+	mux.HandleFunc("/health", func(writer http.ResponseWriter, request *http.Request) {
+	writer.Write([]byte("ok"))
+	})
 	//mux.HandleFunc("/validate", whsvr.serve)
 	server.Handler = mux
 	fmt.Println("start service------")
