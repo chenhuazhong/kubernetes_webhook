@@ -31,8 +31,8 @@
 1. 创建秘钥部署证书
     ```shell script
     # 生成证书 创建 webhook配置
-    # 传参数为webhook调用的ip，也是本地服务绑定的ip
-    bash ./install_dev.sh 192.168.179.128
+    # 传参数为webhook调用的ip 和 port，也是本地服务绑定的ip port 
+    bash ./install_dev.sh 192.168.179.128 8088
     
     ```
 2. 运行本地服务

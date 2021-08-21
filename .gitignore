@@ -17,3 +17,4 @@ deployment/mutatingwebhook-ca-bundle.yaml
 deployment/validatingwebhook-ca-bundle.yaml
 .vscode/*
 certs/*
+dist/*
