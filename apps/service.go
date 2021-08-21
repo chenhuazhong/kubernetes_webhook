@@ -161,15 +161,15 @@ func Sidecar(writer http.ResponseWriter, request *http.Request)  {
 	}
 	contarner_list := []corev1.Container{}
 	contarner_list = append(contarner_list, sidecar_contarner_config)
-	contarner_list = append(contarner_list, pod.Spec.Containers...)
+	//contarner_list = append(contarner_list, pod.Spec.Containers...)
 
 
 
 	//contarner_list_byte, _ := json.Marshal(contarner_list)
 	path_list = append(path_list, utils.ApiResourceJsonPath{
-		Op: "replace",
-		Path: "/spec/containers",
-		Value: contarner_list,
+		Op: "add",
+		Path: "/spec/containers/-",
+		Value: sidecar_contarner_config,
 	})
 	var PatchTypeJSONPatch v12.PatchType = "JsonPath"
 	path_byte_data,_ :=json.Marshal(path_list)
