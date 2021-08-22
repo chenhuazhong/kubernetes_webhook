@@ -67,7 +67,7 @@ if [ -e $tmpdir ];then
   echo "删除证书临时目录文件 ${tmpdir}"
   rm  $tmpdir/*
 else
-  mkdir tmpdir
+  mkdir $tmpdir
 fi
 echo "creating certs in tmpdir ${tmpdir} "
 
